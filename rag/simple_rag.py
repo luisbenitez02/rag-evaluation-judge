@@ -9,11 +9,11 @@ class RAG:
     def __init__(self, endpoint_az,model="o4-mini_pv", embedding_model="text-embedding-3-large"):
         self.llm = AzureChatOpenAI(
             azure_endpoint= f'https://{endpoint_az}.cognitiveservices.azure.com/openai/deployments/gpt-4o-mini/chat/completions?api-version=2025-01-01-preview',#os.environ["AZURE_OPENAI_ENDPOINT"],
-            azure_deployment=model,#os.environ["AZURE_OPENAI_DEPLOYMENT_NAME"],
-            openai_api_version='2024-12-01-preview')#os.environ["AZURE_OPENAI_API_VERSION"])
+            azure_deployment=model,
+            openai_api_version='2024-12-01-preview')
         self.embeddings = AzureOpenAIEmbeddings(
             azure_endpoint= f'https://{endpoint_az}.cognitiveservices.azure.com/openai/deployments/text-embedding-3-large/embeddings?api-version=2023-05-15',#os.environ["AZURE_OPENAI_ENDPOINT"],
-            azure_deployment=embedding_model,#os.environ["AZURE_OPENAI_DEPLOYMENT_NAME"],
+            azure_deployment=embedding_model,
             openai_api_version='2024-02-01')
         self.doc_embeddings = None
         self.docs = None
