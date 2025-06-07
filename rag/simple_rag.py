@@ -46,3 +46,7 @@ class RAG:
         ]
         ai_msg = self.llm.invoke(messages)
         return ai_msg.content
+    
+    def get_embedding(self, query): 
+        """Get the embedding for a given text."""
+        return self.embeddings.embed_query(query)
