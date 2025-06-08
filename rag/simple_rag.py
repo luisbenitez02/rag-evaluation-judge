@@ -50,3 +50,11 @@ class RAG:
     def get_embedding(self, query): 
         """Get the embedding for a given text."""
         return self.embeddings.embed_query(query)
+    
+    def get_simple_response(self, query):
+        """Get the response for a given query using the RAG approach."""
+        relevant_docs = self.get_most_relevant_docs(query)
+        if not relevant_docs:
+            return "No relevant documents found."
+        answer = self.generate_answer(query, relevant_docs)
+        return answer

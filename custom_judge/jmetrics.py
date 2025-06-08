@@ -32,18 +32,25 @@ class similarity_consistency():
         return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
     
     
-    def compare_embs(response_embedding, question, rg_obj):
+    def compare_embs(expected_response_embedding, question, rg_obj):
         tmp_metrics = []
         for i in range(2):
-            step_response = rg_obj.get_response(question)
+            step_response = rg_obj.get_simple_response(question)
             step_embedding = rg_obj.get_embedding(step_response)
-            similarity_consistency.cosine_similarity(response_embedding, step_embedding)
+            similarity = similarity_consistency.cosine_similarity(expected_response_embedding, step_embedding)
+            tmp_metrics.append(similarity)
+        avg_similarity = np.mean(tmp_metrics)
+        return avg_similarity
 
 
 
     def eval(self, eval_dataset):
+        similarity_metrics = []
         for i in eval_dataset:
-            response_embedding = self.rg_obj.embed_query(i.response)
+            expected_response_embedding = self.rg_obj.get_embedding(i.response)
+            avg_simnilarity = similarity_consistency.compare_embs(expected_response_embedding, i.question, self.rg_obj)
+            similarity_metrics.append(avg_simnilarity)
+        return np.mean(similarity_metrics)
 
 
 
