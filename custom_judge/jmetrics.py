@@ -57,9 +57,37 @@ class similarity_consistency():
 
 
 
-class clarity():
-    def __init__(self, name):
-        self.name = name
+class clarity_coherence():
+    def __init__(self, judge_agent, default_time=180):
+        self.judge_agent = judge_agent
+        self.DEFAULT_WAIT_TIME = default_time  # Default wait time for the judge agent to respond
+    
+    def call_judge_agent():
+        pass
 
-    def compute(self, *args, **kwargs):
-        raise NotImplementedError("PENDING")#TODO
+    # Evaluate the clarity and coherence of an LLM answer.
+    def evaluate_clarity_coherence(self, question: str, expected_answer: str, real_answer: str) -> int:
+        CLARITY_COHERENCE_SYSTEM = """You are a writing evaluator. Your task is to evaluate the clarity and coherence of the provided answer. Assess how well-structured and easy to understand the answer is.
+        Consider the organization of thoughts, sentence structure, and overall readability.
+        Clarity helps the user grasp the content quickly. Compare the provided answer with an expert response to gauge its clarity and coherence.Evaluate with an integer score from 1 to 5, where 1 means "the writing is poor and incoherent" and 5 means "the writing is very clear and entirely coherent, equal or even better than the expert response."
+        Return only a single integer score of the overall evaluation result."""
+
+        CLARITY_COHERENCE_USER = """Given the question: <<<{question}>>> and the expert response: <<<{expected_answer}>>>"""
+
+
+        if not all(isinstance(arg, str) for arg in [question, expected_answer, real_answer]):
+            raise ValueError("All inputs must be strings.")
+        
+        try:    
+            messages = [
+                {"role": "system", "content": CLARITY_COHERENCE_SYSTEM},
+                {"role": "user", "content": CLARITY_COHERENCE_USER.format(
+                    question=question, expected_answer=expected_answer, real_answer=real_answer
+                )},
+            ]
+            eval_result = clarity_coherence.call_judge_agent(messages, self.DEFAULT_WAIT_TIME)
+            eval_score = int(eval_result)
+            return eval_score
+        except Exception as e:
+            print(f"An error occurred during clarity and cherence evaluation: {str(e)}")
+            return 0  # Default score when error occurs
