@@ -34,12 +34,14 @@ class similarity_consistency():
     
     def compare_embs(expected_response_embedding, question, rg_obj):
         tmp_metrics = []
-        for i in range(2):
+        for i in range(3):
+            #print(i)
             step_response = rg_obj.get_simple_response(question)
             step_embedding = rg_obj.get_embedding(step_response)
-            similarity = similarity_consistency.cosine_similarity(expected_response_embedding, step_embedding)
+            similarity = similarity_consistency.cosine_similarity(np.array(expected_response_embedding), np.array(step_embedding))
             tmp_metrics.append(similarity)
         avg_similarity = np.mean(tmp_metrics)
+        #print(f"--- Average similarity: {avg_similarity}")
         return avg_similarity
 
 
@@ -47,10 +49,11 @@ class similarity_consistency():
     def eval(self, eval_dataset):
         similarity_metrics = []
         for i in eval_dataset:
-            expected_response_embedding = self.rg_obj.get_embedding(i.response)
-            avg_simnilarity = similarity_consistency.compare_embs(expected_response_embedding, i.question, self.rg_obj)
+            #print(f"Evaluating similarity consistency of {i}")
+            expected_response_embedding = self.rg_obj.get_embedding(i['response'])
+            avg_simnilarity = similarity_consistency.compare_embs(expected_response_embedding, i['user_input'], self.rg_obj)
             similarity_metrics.append(avg_simnilarity)
-        return np.mean(similarity_metrics)
+        return round(np.mean(similarity_metrics),4)
 
 
 

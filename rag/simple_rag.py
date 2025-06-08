@@ -55,6 +55,7 @@ class RAG:
         """Get the response for a given query using the RAG approach."""
         relevant_docs = self.get_most_relevant_docs(query)
         if not relevant_docs:
+            print("No relevant documents found. ERROR!!")
             return "No relevant documents found."
         answer = self.generate_answer(query, relevant_docs)
         return answer
