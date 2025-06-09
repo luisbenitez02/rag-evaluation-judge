@@ -63,8 +63,9 @@ class clarity_coherence():
         self.rg_obj = rg_obj
         self.DEFAULT_WAIT_TIME = default_time  # Default wait time for the judge agent to respond
     
-    def call_judge_agent():
-        pass
+    def call_judge_agent(messages,judge_agent):
+        ai_msg = judge_agent.llm.invoke(messages)
+        return int(ai_msg.content)
 
     # Evaluate the clarity and coherence of an LLM answer.
     def evaluate_clarity_coherence(self, question: str, expected_answer: str, real_answer: str) -> int:
@@ -73,7 +74,15 @@ class clarity_coherence():
         Clarity helps the user grasp the content quickly. Compare the provided answer with an expert response to gauge its clarity and coherence.Evaluate with an integer score from 1 to 5, where 1 means "the writing is poor and incoherent" and 5 means "the writing is very clear and entirely coherent, equal or even better than the expert response."
         Return only a single integer score of the overall evaluation result."""
 
-        CLARITY_COHERENCE_USER = """Given the question: <<<{question}>>> and the expert response: <<<{expected_answer}>>>"""
+        CLARITY_COHERENCE_USER = """Given the question: <<<{question}>>> and the expert response: <<<{expected_answer}>>> evaluate the clarity and coherence of the following answer: <<<{real_answer}>>>.
+        Use the following scoring criteria from 1 to 5:
+        1 - The writing is poor and incoherent, very difficult to understand.
+        2 - The writing is somewhat unclear or disorganized, with frequent issues in clarity or coherence.
+        3 - The writing is understandable but has noticeable issues in clarity, structure, or coherence.
+        4 - The writing is mostly clear and coherent, with only minor issues.
+        5 - The writing is very clear and entirely coherent, equal or even better than the expert response.
+        Return only a single integer score of the overall evaluation result.
+        """
 
 
         if not all(isinstance(arg, str) for arg in [question, expected_answer, real_answer]):
