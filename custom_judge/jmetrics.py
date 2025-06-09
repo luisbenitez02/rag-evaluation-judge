@@ -74,7 +74,7 @@ class clarity_coherence():
         Clarity helps the user grasp the content quickly. Compare the provided answer with an expert response to gauge its clarity and coherence.Evaluate with an integer score from 1 to 5, where 1 means "the writing is poor and incoherent" and 5 means "the writing is very clear and entirely coherent, equal or even better than the expert response."
         Return only a single integer score of the overall evaluation result."""
 
-        CLARITY_COHERENCE_USER = """Given the question: <<<{question}>>> and the expert response: <<<{expected_answer}>>> evaluate the clarity and coherence of the following answer: <<<{real_answer}>>>.
+        CLARITY_COHERENCE_USER = f"""Given the question: <<<{question}>>> and the expert response: <<<{expected_answer}>>> evaluate the clarity and coherence of the following answer: <<<{real_answer}>>>.
         Use the following scoring criteria from 1 to 5:
         1 - The writing is poor and incoherent, very difficult to understand.
         2 - The writing is somewhat unclear or disorganized, with frequent issues in clarity or coherence.
@@ -91,15 +91,14 @@ class clarity_coherence():
         try:    
             messages = [
                 {"role": "system", "content": CLARITY_COHERENCE_SYSTEM},
-                {"role": "user", "content": CLARITY_COHERENCE_USER.format(
-                    question=question, expected_answer=expected_answer, real_answer=real_answer
-                )},
+                {"role": "user", "content": CLARITY_COHERENCE_USER},
             ]
             eval_result = clarity_coherence.call_judge_agent(messages, self.DEFAULT_WAIT_TIME)
             eval_score = int(eval_result)
+            print(eval_score)
             return eval_score
         except Exception as e:
-            print(f"An error occurred during clarity and cherence evaluation: {str(e)}")
+            print(f"An error occurred during clarity and coherence evaluation: {str(e)}")
             return 0  # Default score when error occurs
     
 
