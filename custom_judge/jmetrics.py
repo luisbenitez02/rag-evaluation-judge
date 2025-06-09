@@ -58,8 +58,9 @@ class similarity_consistency():
 
 
 class clarity_coherence():
-    def __init__(self, judge_agent, default_time=180):
+    def __init__(self, judge_agent, rg_obj, default_time=180):
         self.judge_agent = judge_agent
+        self.rg_obj = rg_obj
         self.DEFAULT_WAIT_TIME = default_time  # Default wait time for the judge agent to respond
     
     def call_judge_agent():
@@ -91,3 +92,20 @@ class clarity_coherence():
         except Exception as e:
             print(f"An error occurred during clarity and cherence evaluation: {str(e)}")
             return 0  # Default score when error occurs
+    
+
+    def eval(self, eval_dataset):
+        clarity_coherence_metrics = []
+        for i in eval_dataset:
+            #print(f"Evaluating clarity and coherence of {i}")
+            real_answer = self.rg_obj.get_simple_response(i['user_input'])
+            eval_score = self.evaluate_clarity_coherence(i['user_input'], i['response'], real_answer)
+            clarity_coherence_metrics.append({"user_input": i['user_input'], "score": eval_score})
+        
+        # Calcular el promedio de los scores
+        if len(clarity_coherence_metrics) > 0:
+            avg_score = np.mean([item["score"] for item in clarity_coherence_metrics])
+            return round(avg_score, 4), clarity_coherence_metrics
+        else:
+            print("Error getting clarity and coherence metrics.")
+            return 0, None
